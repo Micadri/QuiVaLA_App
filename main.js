@@ -1,30 +1,51 @@
 import { fetchPersonnel, fetchFormations, postVisit } from './api.js';
 import { showScreen, populateSelect, renderTicket } from './ui.js';
 
-/**
- * Point d'entrée principal de l'application Tablette Accueil (Bootstrap).
- * Gère la navigation SPA, l'injection des listes d'options et l'automatisation de l'horodatage.
- */
 document.addEventListener('DOMContentLoaded', async () => {
     
     // ==========================================
+    // GESTION DE L'INTERFACE DYNAMIQUE (UI)
+    // ==========================================
+    const linkNewVisitor = document.getElementById('link-new-visitor');
+    const toggleNewVisitor = document.getElementById('toggle-new-visitor');
+    const newVisitorFields = document.getElementById('new-visitor-fields');
+    const prenomInput = document.getElementById('prenom');
+    const nomInput = document.getElementById('nom');
+
+    // Clic sur "Pas encore enregistré ?"
+    linkNewVisitor.addEventListener('click', (e) => {
+        e.preventDefault();
+        newVisitorFields.style.display = 'block';
+        toggleNewVisitor.style.display = 'none'; // On masque le lien
+        prenomInput.required = true; // Devient obligatoire
+        nomInput.required = true;    // Devient obligatoire
+    });
+
+    // Fonction pour tout remettre à zéro après une visite
+    const resetFormUI = () => {
+        document.getElementById('entry-form').reset();
+        newVisitorFields.style.display = 'none';
+        toggleNewVisitor.style.display = 'block';
+        prenomInput.required = false;
+        nomInput.required = false;
+        document.getElementById('bloc-personnel').style.display = 'none';
+        document.getElementById('bloc-formation').style.display = 'none';
+    };
+
+    // ==========================================
     // NAVIGATION DU PARCOURS UTILISATEUR
     // ==========================================
-
-    // Bouton "Je signale mon entrée"
     document.getElementById('btn-start-entry').addEventListener('click', () => {
         showScreen('screen-form');
     });
 
-    // Bouton "Annuler" : réinitialise le formulaire et retourne à l'accueil
     document.getElementById('btn-cancel').addEventListener('click', () => {
-        document.getElementById('entry-form').reset();
+        resetFormUI();
         showScreen('screen-home');
     });
 
-    // Bouton "Terminer" : clôture le ticket et prépare l'application pour le suivant
     document.getElementById('btn-finish').addEventListener('click', () => {
-        document.getElementById('entry-form').reset();
+        resetFormUI();
         showScreen('screen-home');
     });
 
@@ -36,7 +57,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     populateSelect('visite-personnel', personnels);
     populateSelect('visite-formation', formations);
 
-    // Logique conditionnelle : Affichage dynamique des sous-menus selon le type choisi
     const selectType = document.getElementById('visite-type');
     const blocPersonnel = document.getElementById('bloc-personnel');
     const blocFormation = document.getElementById('bloc-formation');
@@ -55,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // GESTION DE LA SOUMISSION REELLE ET COMPACTE
+    // GESTION DE LA SOUMISSION
     // ==========================================
     const entryForm = document.getElementById('entry-form');
     entryForm.addEventListener('submit', async (e) => {
@@ -63,10 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const errorDisplay = document.getElementById('form-error');
         errorDisplay.style.display = 'none';
 
-        // 1. Récupération des données d'identité du visiteur
         const formDataObj = Object.fromEntries(new FormData(e.target));
-
-        // 2. Récupération et formatage automatique de la Date/Heure locale de la machine
         const localMachineDate = new Date();
 
         const day = String(localMachineDate.getDate()).padStart(2, '0');
@@ -78,7 +95,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const entryMinutes = String(localMachineDate.getMinutes()).padStart(2, '0');
         const formattedEntryTime = `${entryHours}:${entryMinutes}`;
 
-        // 3. Calcul automatique de l'heure de sortie (Heure d'entrée + 2h)
         const exitMachineDate = new Date(localMachineDate.getTime());
         exitMachineDate.setHours(localMachineDate.getHours() + 2);
 
@@ -86,7 +102,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const exitMinutes = String(exitMachineDate.getMinutes()).padStart(2, '0');
         const formattedExitTime = `${exitHours}:${exitMinutes}`;
 
-        // 4. Alignement strict des variables pour le plugin PHP
         const fullyEnrichedPayload = {
             ...formDataObj,
             'date': formattedLocalDate,
@@ -95,10 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            // ACTIVATION DE L'APPEL REEL VERS TON PLUGIN PHP
             const response = await postVisit(fullyEnrichedPayload);
-            
-            // On extrait la véritable ID générée par WordPress
             const dynamicVisitorId = response.idVisiteur;
             
             let targetName = '';
@@ -114,7 +126,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 assignedRoom = selectElement.options[selectElement.selectedIndex].dataset.local || 'Inconnu';
             }
 
-            // Génération de l'étiquette finale avec l'identifiant réel de ta DB
             renderTicket(fullyEnrichedPayload, targetName, assignedRoom, dynamicVisitorId, formattedEntryTime, formattedExitTime);
 
         } catch (error) {
