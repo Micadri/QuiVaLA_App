@@ -1,5 +1,4 @@
 export const showScreen = (screenId) => {
-    // Ajout des nouveaux écrans de retour
     const appScreens = ['screen-home', 'screen-form', 'screen-return-search', 'screen-return-confirm', 'screen-logout', 'screen-ticket'];
     appScreens.forEach(id => {
         document.getElementById(id).style.display = 'none';
@@ -33,15 +32,19 @@ export const renderTicket = (formData, targetName, assignedRoom, visitorId, entr
     const ticketContainer = document.getElementById('ticket-content');
     if (!ticketContainer) return;
 
+    // Formatage précis de l'étiquette pour impression
     ticketContainer.innerHTML = `
+        <h3 style="text-align: center; margin-top: 0; text-transform: uppercase;">Badge Visiteur</h3>
         <p><strong>Visiteur :</strong> ${formData['visiteur-prenom']} ${formData['visiteur-nom']}</p>
         <p><strong>Date :</strong> ${formData.date}</p>
         <p><strong>Heure d'Arrivée :</strong> ${entryTime}</p>
-        <hr style="border-top: 1px dashed #000;">
         <p><strong>Rendez-vous :</strong> ${targetName}</p>
         <p><strong>Localisation :</strong> ${assignedRoom}</p>
-        <p style="font-size: 18px; margin-top: 10px;"><strong>VOTRE IDENTIFIANT COMPLET : ${visitorId}</strong></p>
+        <div style="text-align: center; border: 2px solid black; padding: 5px; margin-top: 15px;">
+            <strong>VOTRE IDENTIFIANT COMPLET : ${visitorId}</strong>
+        </div>
     `;
+    
     showScreen('screen-ticket');
 };
 

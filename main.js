@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const formDataObj = Object.fromEntries(new FormData(e.target));
         const payload = buildTimePayload(formDataObj);
 
-        try {
+       try {
             const response = await postVisit(payload);
             const dynamicVisitorId = response.pinVisiteur || response.idVisiteur;
             
@@ -108,6 +108,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             renderTicket(payload, targetName, assignedRoom, dynamicVisitorId, payload.heure_entree);
+            
+            // DÉCLENCHEMENT DE L'IMPRESSION
+            setTimeout(() => {
+                window.print();
+            }, 500);
+
         } catch (error) {
             errorDisplay.textContent = "Erreur d'enregistrement. Veuillez réessayer.";
             errorDisplay.style.display = 'block';
@@ -182,7 +188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         payload['visiteur-prenom'] = document.getElementById('ret-prenom').textContent;
         payload['visiteur-nom'] = document.getElementById('ret-nom').textContent;
 
-        try {
+       try {
             const response = await postVisit(payload);
             const dynamicVisitorId = response.pinVisiteur || response.idVisiteur;
             
@@ -200,6 +206,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             renderTicket(payload, targetName, assignedRoom, dynamicVisitorId, payload.heure_entree);
+            
+            // DÉCLENCHEMENT DE L'IMPRESSION
+            setTimeout(() => {
+                window.print();
+            }, 500);
+
         } catch (error) {
             errorDisplay.textContent = "Erreur d'enregistrement. Veuillez réessayer.";
             errorDisplay.style.display = 'block';
