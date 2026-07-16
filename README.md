@@ -12,7 +12,7 @@
 Pour répondre aux exigences de performance et d'architecture, cette application est développée **sans aucun framework JavaScript** (ni Vue, ni React, ni Angular).
 
 * **Vanilla JavaScript (ES6+) :** Architecture modulaire stricte (`import`/`export`) pour séparer la logique réseau, l'interface et le contrôleur principal.
-* **HTML5 & CSS3 :** Structure native avec manipulation du DOM en temps réel. Utilisation avancée de `@media print` pour le formatage des badges.
+* **HTML5 & CSS3 :** Structure native avec manipulation du DOM en temps réel. Utilisation avancée des variables CSS (bascule dynamique Dark/Light) et de `@media print` pour le formatage des badges.
 * **Fetch API :** Communication asynchrone avec le serveur WordPress Headless.
 * **Déploiement :** Prévu pour être hébergé sur Vercel.
 
@@ -26,13 +26,13 @@ Le projet est ventilé en plusieurs fichiers pour respecter le principe de respo
 * `api.js` : Isolation de toutes les requêtes réseau (`GET` pour les listes et les profils, `POST` pour les entrées et les sorties).
 * `ui.js` : Manipulation du DOM, gestion de l'affichage des écrans (SPA) et génération de l'étiquette d'impression.
 * `main.js` : Le contrôleur principal. Il écoute les événements, gère les toggles (ID/Email), calcule les horodatages dynamiques et orchestre la communication.
-* `style.css` : Feuille de style dédiée, incluant la logique pour masquer l'interface et redimensionner le ticket au format badge (85x55mm) lors de l'impression.
+* `style.css` : Feuille de style dédiée, incluant le design system (Dark Luxury / Bento Grid), la logique de thème persistant, et la règle pour masquer l'interface et redimensionner le ticket au format badge (85x55mm) lors de l'impression.
 
 ---
 
 ## ⚙️ Parcours Utilisateur (User Flow)
 
-L'application fonctionne sur une seule page HTML (`index.html`) avec une navigation fluide par alternance d'écrans :
+L'application fonctionne sur une seule page HTML (`index.html`) avec une navigation fluide par alternance d'écrans optimisés pour le tactile :
 
 1. **Écran d'Accueil :** Le visiteur a 3 options : **Première visite**, **Déjà venu (Retour)** ou **Sortie**.
 2. **Identification Flexible :** 
@@ -52,13 +52,13 @@ L'application fonctionne sur une seule page HTML (`index.html`) avec une navigat
 * [x] **Flux de Retour (Smart UI) :** Recherche asynchrone par PIN ou Email avec système de *toggle* pour faciliter l'identification des habitués.
 * [x] **Flux de Sortie Unifié :** Parcours de déconnexion flexible (PIN ou Email) avec horodatage réel de départ venant clôturer la visite active.
 * [x] **Impression Automatique du Badge :** Injection des données dans un template de ticket et déclenchement automatique de l'impression via une feuille de style spécifique (`@media print`).
+* [x] **Design Global (UI/UX Premium) :** Interface optimisée pour un usage tactile (boutons massifs, carte centrale Bento) avec un style "Dark Luxury" et un bouton de basculement dynamique clair/sombre.
 
 ---
 
 ## 🎯 Étapes à venir (Roadmap)
 
 ### Version 1 (En cours)
-* [ ] **Design Global (UI/UX) :** Finaliser la feuille de style CSS pour rendre l'interface de la tablette ergonomique, accessible et visuellement professionnelle (hors impression).
 * [ ] **Gestion des erreurs réseau :** Améliorer l'affichage des notifications en cas de perte de connexion de la borne.
 
 ### Version 2

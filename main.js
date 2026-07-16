@@ -1,8 +1,29 @@
 import { fetchPersonnel, fetchFormations, fetchVisitor, postVisit, postExit } from './api.js';
 import { showScreen, populateSelect, renderTicket, renderExitConfirmation } from './ui.js';
 
+// --- GESTION DU THÈME SOMBRE / CLAIR ---
+const initTheme = () => {
+    const themeBtn = document.getElementById('theme-toggle');
+    if (!themeBtn) return;
+
+    const savedTheme = localStorage.getItem('quivala-app-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    themeBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('quivala-app-theme', newTheme);
+        themeBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
     
+    initTheme(); // Lancement du Dark Mode Logic
+
     // ==========================================
     // INITIALISATION DE L'INTERFACE (UI Reset)
     // ==========================================
@@ -20,14 +41,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('search-mode').value = 'id';
         document.getElementById('search-id-group').style.display = 'block';
         document.getElementById('search-email-group').style.display = 'none';
-        document.getElementById('link-toggle-search').textContent = "J'ai oublié mon ID, utiliser mon email";
+        document.getElementById('link-toggle-search').textContent = "J'ai oublié mon PIN, utiliser mon email";
         
-        // Reset aussi le mode de sortie
         document.getElementById('exit-mode').value = 'id';
         document.getElementById('exit-id-group').style.display = 'block';
         document.getElementById('exit-email-group').style.display = 'none';
         const toggleExit = document.getElementById('link-toggle-exit');
-        if(toggleExit) toggleExit.textContent = "J'ai oublié mon ID, utiliser mon email";
+        if(toggleExit) toggleExit.textContent = "J'ai oublié mon PIN, utiliser mon email";
     };
 
     // ==========================================
@@ -108,7 +128,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             renderTicket(payload, targetName, assignedRoom, dynamicVisitorId, payload.heure_entree);
             
-            // Impression automatique du badge
             setTimeout(() => { window.print(); }, 500);
 
         } catch (error) {
@@ -128,12 +147,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('search-id-group').style.display = 'none';
             document.getElementById('search-email-group').style.display = 'block';
             modeInput.value = 'email';
-            e.target.textContent = "Je veux utiliser mon numéro d'ID";
+            e.target.textContent = "Je veux utiliser mon Code PIN";
         } else {
             document.getElementById('search-id-group').style.display = 'block';
             document.getElementById('search-email-group').style.display = 'none';
             modeInput.value = 'id';
-            e.target.textContent = "J'ai oublié mon ID, utiliser mon email";
+            e.target.textContent = "J'ai oublié mon PIN, utiliser mon email";
         }
     });
 
@@ -198,7 +217,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             renderTicket(payload, targetName, assignedRoom, dynamicVisitorId, payload.heure_entree);
             
-            // Impression automatique du badge
             setTimeout(() => { window.print(); }, 500);
 
         } catch (error) {
@@ -208,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // FLUX 3 : SORTIE DU BÂTIMENT (CORRIGÉ)
+    // FLUX 3 : SORTIE DU BÂTIMENT
     // ==========================================
     const linkToggleExit = document.getElementById('link-toggle-exit');
     if (linkToggleExit) {
@@ -219,12 +237,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('exit-id-group').style.display = 'none';
                 document.getElementById('exit-email-group').style.display = 'block';
                 modeInput.value = 'email';
-                e.target.textContent = "Je veux utiliser mon numéro d'ID";
+                e.target.textContent = "Je veux utiliser mon Code PIN";
             } else {
                 document.getElementById('exit-id-group').style.display = 'block';
                 document.getElementById('exit-email-group').style.display = 'none';
                 modeInput.value = 'id';
-                e.target.textContent = "J'ai oublié mon ID, utiliser mon email";
+                e.target.textContent = "J'ai oublié mon PIN, utiliser mon email";
             }
         });
     }
@@ -235,7 +253,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const errorDisplay = document.getElementById('exit-error');
         errorDisplay.style.display = 'none';
 
-        // On récupère directement les valeurs tapées par l'utilisateur
         const mode = document.getElementById('exit-mode').value;
         const query = mode === 'id' ? document.getElementById('exit-id').value : document.getElementById('exit-email').value;
         
@@ -248,7 +265,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const now = new Date();
         const formattedExitTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-        // Construction du nouveau format attendu par le PHP
         const exitPayload = {
             'identifier': query, 
             'mode': mode,

@@ -1,63 +1,191 @@
-/* =========================================
-   STYLE DE BASE (Écrans normaux)
-========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
+
+:root {
+    /* MODE CLAIR */
+    --bg-color: #f4f5f7;
+    --surface-color: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --accent-color: #b8860b; 
+    --accent-hover: #996515;
+    --danger-color: #ef4444;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 8px;
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.05);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+    /* MODE SOMBRE (Dark Luxury) */
+    --bg-color: #0a0a0a;
+    --surface-color: #141414;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --accent-color: #d4af37; 
+    --accent-hover: #f1c40f;
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    transition: var(--transition);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
 }
 
+h1 { font-size: 32px; margin-bottom: 10px; color: var(--accent-color); }
+h2 { font-size: 26px; margin-bottom: 20px; }
+p { font-size: 18px; color: var(--text-secondary); margin-bottom: 25px; line-height: 1.5; }
+hr { border: none; border-top: 1px solid var(--border-color); margin: 30px 0; }
+
+/* LA CARTE CENTRÉE (BENTO) */
 #app {
-    max-width: 800px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 50px;
+    width: 100%;
+    max-width: 650px;
+    box-shadow: var(--shadow-soft);
+    text-align: center;
 }
 
-#ticket-content {
-    border: 2px dashed #000; 
-    padding: 15px; 
-    margin: 20px 0;
-    background-color: #fafafa;
+/* ÉLÉMENTS DE FORMULAIRE (Format Tablette) */
+form div {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+input, select {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 18px 20px;
+    font-size: 18px;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    transition: var(--transition);
+    outline: none;
+    appearance: none; /* Enlève le style natif d'Apple/Android */
+}
+
+input:focus, select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+/* BOUTONS (Format Tablette) */
+button {
+    width: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 18px 20px;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 18px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 15px;
+}
+
+button:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+button[type="submit"], #btn-start-entry, #btn-start-return {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+}
+
+button[type="submit"]:hover, #btn-start-entry:hover, #btn-start-return:hover {
+    background-color: var(--accent-hover);
+}
+
+#btn-start-exit { background-color: transparent; }
+
+/* LIENS & TEXTES SPÉCIAUX */
+a { color: var(--accent-color) !important; text-decoration: none; font-weight: 500; }
+a:hover { text-decoration: underline; }
+
+.recap-box {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: var(--radius-md);
+    text-align: left;
+}
+.recap-box p { margin-bottom: 10px; font-size: 16px; color: var(--text-primary); }
+
+/* BOUTON THEME TOGGLE */
+.theme-toggle-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    font-size: 28px;
+    padding: 0;
+    z-index: 999;
+    margin: 0;
 }
 
 /* =========================================
    STYLE D'IMPRESSION (Badge Torse)
 ========================================= */
 @media print {
-    /* 1. On cache absolument TOUTE l'interface de la tablette */
-    body * {
-        visibility: hidden;
-    }
-
-    /* 2. On supprime les marges par défaut de la page d'impression */
-    @page {
-        margin: 0; 
-    }
-
-    /* 3. On ne rend visible QUE le contenu du ticket */
+    body * { visibility: hidden; }
+    @page { margin: 0; }
+    
     #ticket-content, #ticket-content * {
         visibility: visible;
+        color: #000 !important; /* Force le noir sur l'imprimante */
     }
-
-    /* 4. On positionne l'étiquette en haut à gauche et on lui donne une taille physique */
+    
     #ticket-content {
         position: absolute;
         left: 0;
         top: 0;
-        width: 85mm; /* Largeur standard d'un badge */
-        height: 55mm; /* Hauteur standard d'un badge */
+        width: 85mm; 
+        height: 55mm; 
         margin: 0;
         padding: 5mm;
-        border: none; /* On enlève les tirets pour la vraie impression */
-        background-color: transparent;
+        border: none; 
+        background-color: white !important; /* Force le blanc */
         font-size: 12pt;
     }
-
-    /* Ajustement des paragraphes pour que ça rentre bien dans le badge */
+    
     #ticket-content p {
         margin: 5px 0;
         line-height: 1.2;

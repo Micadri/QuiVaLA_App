@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Accueil Visiteur - Qui Va Là ?</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    
+    <button id="theme-toggle" class="theme-toggle-btn">🌙</button>
 
     <div id="app">
+        <!-- ÉCRAN 1 : ACCUEIL -->
         <div id="screen-home">
-            <h1>Bienvenue chez nous</h1>
-            <p>Veuillez signaler votre présence ou votre départ.</p>
+            <h1>Qui Va Là ?</h1>
+            <p>Bienvenue. Veuillez signaler votre présence ou votre départ.</p>
             <button id="btn-start-entry">Première visite (Nouveau)</button>
             <button id="btn-start-return">Déjà venu (Retour)</button>
             <button id="btn-start-exit">Je signale ma sortie</button>
         </div>
 
+        <!-- ÉCRAN 2 : FORMULAIRE NOUVEAU VISITEUR -->
         <div id="screen-form" style="display: none;">
-            <h2>Enregistrement de votre profil</h2>
+            <h2>Création de votre profil</h2>
             
             <form id="entry-form">
                 <div>
@@ -29,48 +34,48 @@
                     <input type="text" id="nom" name="visiteur-nom" required>
                 </div>
                 <div>
-                    <label for="email">Email :</label>
+                    <label for="email">Adresse Email :</label>
                     <input type="email" id="email" name="visiteur-email" required>
                 </div>
                 
                 <hr>
 
                 <div>
-                    <label for="visite-type">Motif de la visite :</label>
+                    <label for="visite-type">Motif de votre visite :</label>
                     <select id="visite-type" name="visite-type" required>
-                        <option value="">-- Choisissez --</option>
-                        <option value="Visite">Visiter un membre du personnel</option>
-                        <option value="Formation">Suivre une formation ce jour</option>
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="Visite">Rendez-vous avec un membre du personnel</option>
+                        <option value="Formation">Je viens suivre une formation</option>
                     </select>
                 </div>
 
                 <div id="bloc-personnel" style="display: none;">
-                    <label for="visite-personnel">Qui venez-vous voir ?</label>
+                    <label for="visite-personnel">Personne rencontrée :</label>
                     <select id="visite-personnel" name="visite-personnel"></select>
                 </div>
 
                 <div id="bloc-formation" style="display: none;">
-                    <label for="visite-formation">Quelle formation ?</label>
+                    <label for="visite-formation">Formation suivie :</label>
                     <select id="visite-formation" name="visite-formation"></select>
                 </div>
 
-                <br>
                 <button type="submit">Valider mon entrée</button>
-                <button type="button" id="btn-cancel-entry">Annuler</button>
+                <button type="button" id="btn-cancel-entry">Retour à l'accueil</button>
             </form>
-            <p id="form-error" style="color: red; display: none;"></p>
+            <p id="form-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
+        <!-- ÉCRAN 3 : RECHERCHE VISITEUR EXISTANT -->
         <div id="screen-return-search" style="display: none;">
             <h2>Content de vous revoir !</h2>
-            <p>Veuillez vous identifier pour accélérer votre enregistrement.</p>
+            <p>Identifiez-vous pour accélérer votre enregistrement.</p>
             
             <form id="return-search-form">
                 <input type="hidden" id="search-mode" value="id">
                 
                 <div id="search-id-group">
-                    <label for="search-id">Votre Numéro d'Identifiant (ID) :</label>
-                    <input type="text" id="search-id">
+                    <label for="search-id">Votre Code PIN à 4 chiffres :</label>
+                    <input type="text" id="search-id" placeholder="Ex: 4092" pattern="\d{4}">
                 </div>
                 
                 <div id="search-email-group" style="display: none;">
@@ -78,20 +83,21 @@
                     <input type="email" id="search-email">
                 </div>
 
-                <p style="margin-top: 10px; margin-bottom: 20px;">
-                    <a href="#" id="link-toggle-search" style="color: blue; text-decoration: underline;">J'ai oublié mon ID, utiliser mon email</a>
+                <p style="margin: 20px 0;">
+                    <a href="#" id="link-toggle-search">J'ai oublié mon PIN, utiliser mon email</a>
                 </p>
                 
                 <button type="submit">Rechercher mon profil</button>
-                <button type="button" id="btn-cancel-return-search">Annuler</button>
+                <button type="button" id="btn-cancel-return-search">Retour à l'accueil</button>
             </form>
-            <p id="search-error" style="color: red; display: none;"></p>
+            <p id="search-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
+        <!-- ÉCRAN 4 : CONFIRMATION VISITEUR EXISTANT -->
         <div id="screen-return-confirm" style="display: none;">
-            <h2>Confirmez vos coordonnées</h2>
+            <h2>Confirmez votre identité</h2>
             
-            <div style="background: #f0f0f0; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+            <div class="recap-box">
                 <p><strong>Prénom :</strong> <span id="ret-prenom"></span></p>
                 <p><strong>Nom :</strong> <span id="ret-nom"></span></p>
                 <p><strong>Email :</strong> <span id="ret-email"></span></p>
@@ -104,39 +110,39 @@
                 <div>
                     <label for="ret-visite-type">Motif de votre visite d'aujourd'hui :</label>
                     <select id="ret-visite-type" name="visite-type" required>
-                        <option value="">-- Choisissez --</option>
-                        <option value="Visite">Visiter un membre du personnel</option>
-                        <option value="Formation">Suivre une formation ce jour</option>
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="Visite">Rendez-vous avec un membre du personnel</option>
+                        <option value="Formation">Je viens suivre une formation</option>
                     </select>
                 </div>
 
                 <div id="ret-bloc-personnel" style="display: none;">
-                    <label for="ret-visite-personnel">Qui venez-vous voir ?</label>
+                    <label for="ret-visite-personnel">Personne rencontrée :</label>
                     <select id="ret-visite-personnel" name="visite-personnel"></select>
                 </div>
 
                 <div id="ret-bloc-formation" style="display: none;">
-                    <label for="ret-visite-formation">Quelle formation ?</label>
+                    <label for="ret-visite-formation">Formation suivie :</label>
                     <select id="ret-visite-formation" name="visite-formation"></select>
                 </div>
 
-                <br>
                 <button type="submit">Valider mon entrée</button>
                 <button type="button" id="btn-cancel-return-confirm">Annuler</button>
             </form>
-            <p id="ret-form-error" style="color: red; display: none;"></p>
+            <p id="ret-form-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
+        <!-- ÉCRAN 5 : DÉPART -->
         <div id="screen-logout" style="display: none;">
-            <h2>Déclaration de votre départ</h2>
+            <h2>Au revoir !</h2>
             <p>Veuillez vous identifier pour enregistrer votre sortie.</p>
             
             <form id="exit-form">
                 <input type="hidden" id="exit-mode" value="id">
                 
                 <div id="exit-id-group">
-                    <label for="exit-id">Votre Numéro d'Identifiant (ID) :</label>
-                    <input type="text" id="exit-id">
+                    <label for="exit-id">Votre Code PIN à 4 chiffres :</label>
+                    <input type="text" id="exit-id" placeholder="Ex: 4092" pattern="\d{4}">
                 </div>
                 
                 <div id="exit-email-group" style="display: none;">
@@ -144,22 +150,24 @@
                     <input type="email" id="exit-email">
                 </div>
 
-                <p style="margin-top: 10px; margin-bottom: 20px;">
-                    <a href="#" id="link-toggle-exit" style="color: blue; text-decoration: underline;">J'ai oublié mon ID, utiliser mon email</a>
+                <p style="margin: 20px 0;">
+                    <a href="#" id="link-toggle-exit">J'ai oublié mon PIN, utiliser mon email</a>
                 </p>
                 
                 <button type="submit">Valider ma sortie</button>
-                <button type="button" id="btn-cancel-exit">Annuler</button>
+                <button type="button" id="btn-cancel-exit">Retour à l'accueil</button>
             </form>
-            <p id="exit-error" style="color: red; display: none;"></p>
+            <p id="exit-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
+        <!-- ÉCRAN 6 : L'ÉTIQUETTE / CONFIRMATION -->
         <div id="screen-ticket" style="display: none;">
             <h2 id="ticket-title">Entrée validée !</h2>
             <p id="ticket-subtitle">L'impression de votre badge est en cours...</p>
             
             <div id="ticket-content">
-                </div>
+                <!-- Injecté par JS (ui.js) et capturé par @media print -->
+            </div>
             
             <button id="btn-finish">Terminer et retourner à l'accueil</button>
         </div>
