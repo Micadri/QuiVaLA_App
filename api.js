@@ -22,6 +22,22 @@ export const fetchFormations = async () => {
     }
 };
 
+// NOUVELLE REQUETE : Cherche un visiteur par ID ou Email
+export const fetchVisitor = async (query, mode = 'id') => {
+    try {
+        const url = mode === 'id' 
+            ? `${ENV.apiUrl}/quivala/v1/visiteur?id=${query}` 
+            : `${ENV.apiUrl}/quivala/v1/visiteur?email=${query}`;
+            
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Visiteur introuvable");
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const postVisit = async (visitData) => {
     try {
         const res = await fetch(`${ENV.apiUrl}/quivala/v1/entree`, {
@@ -36,7 +52,6 @@ export const postVisit = async (visitData) => {
     }
 };
 
-// NOUVELLE REQUETE : Envoi du signal de sortie
 export const postExit = async (exitData) => {
     try {
         const res = await fetch(`${ENV.apiUrl}/quivala/v1/sortie`, {

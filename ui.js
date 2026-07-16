@@ -1,20 +1,12 @@
-/**
- * Alterne l'affichage des conteneurs HTML (écrans) pour simuler une Single Page Application.
- * @param {string} screenId - L'ID de l'élément HTML block à afficher.
- */
 export const showScreen = (screenId) => {
-    const appScreens = ['screen-home', 'screen-form', 'screen-logout', 'screen-ticket'];
+    // Ajout des nouveaux écrans de retour
+    const appScreens = ['screen-home', 'screen-form', 'screen-return-search', 'screen-return-confirm', 'screen-logout', 'screen-ticket'];
     appScreens.forEach(id => {
         document.getElementById(id).style.display = 'none';
     });
     document.getElementById(screenId).style.display = 'block';
 };
 
-/**
- * Alimente dynamiquement un composant select HTML avec les titres et métadonnées de l'API.
- * @param {string} selectId - L'ID du composant HTML select ciblé.
- * @param {Array} data - Tableau d'objets (Personnel ou Formations) reçus de WordPress.
- */
 export const populateSelect = (selectId, data) => {
     const selectComponent = document.getElementById(selectId);
     selectComponent.innerHTML = '<option value="">-- Sélectionnez --</option>';
@@ -22,11 +14,8 @@ export const populateSelect = (selectId, data) => {
     data.forEach(item => {
         const optionElement = document.createElement('option');
         optionElement.value = item.id; 
-        
-        // On affiche le titre natif de WordPress dans le menu déroulant
         optionElement.textContent = item.title.rendered; 
         
-        // CORRECTION ICI : Ciblage strict des vraies clés ACF retournées par l'API
         if (item.acf && item.acf['personnel-local']) {
             optionElement.dataset.local = item.acf['personnel-local'];
         } else if (item.acf && item.acf['formation-local']) {
@@ -37,9 +26,6 @@ export const populateSelect = (selectId, data) => {
     });
 };
 
-/**
- * Construit structurellement le ticket d'étiquette visiteur et l'injecte dans la vue finale.
- */
 export const renderTicket = (formData, targetName, assignedRoom, visitorId, entryTime) => {
     document.getElementById('ticket-title').textContent = "Entrée validée !";
     document.getElementById('ticket-subtitle').style.display = 'block';
@@ -59,9 +45,6 @@ export const renderTicket = (formData, targetName, assignedRoom, visitorId, entr
     showScreen('screen-ticket');
 };
 
-/**
- * Affiche l'écran de confirmation de sortie définitive.
- */
 export const renderExitConfirmation = (email, exitTime) => {
     document.getElementById('ticket-title').textContent = "Merci de votre visite !";
     document.getElementById('ticket-subtitle').style.display = 'none';
