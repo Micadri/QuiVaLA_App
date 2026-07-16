@@ -24,13 +24,9 @@ export const fetchFormations = async () => {
     }
 };
 
-// Envoi du formulaire d'entrée
+// Envoi du formulaire d'entrée vers l'endpoint Custom
 export const postVisit = async (visitData) => {
     try {
-        // ⚠️ NOTE : Sur un WP classique, on ne peut pas faire de POST public.
-        // Il faudra qu'on configure un endpoint custom (ex: /quivala/v1/entree) côté PHP, 
-        // ou qu'on utilise un token générique "Application Password".
-        // Pour l'instant, on simule l'appel.
         const res = await fetch(`${ENV.apiUrl}/quivala/v1/entree`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -38,7 +34,7 @@ export const postVisit = async (visitData) => {
         });
         
         if (!res.ok) throw new Error("Erreur lors de l'enregistrement");
-        return await res.json(); // WP devrait renvoyer l'ID du visiteur généré et le local
+        return await res.json(); 
     } catch (error) {
         throw error;
     }

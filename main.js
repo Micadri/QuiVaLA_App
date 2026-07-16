@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     populateSelect('visite-personnel', personnels);
     populateSelect('visite-formation', formations);
 
-    // Logic conditionnelle : Affichage dynamique des sous-menus selon le type choisi
+    // Logique conditionnelle : Affichage dynamique des sous-menus selon le type choisi
     const selectType = document.getElementById('visite-type');
     const blocPersonnel = document.getElementById('bloc-personnel');
     const blocFormation = document.getElementById('bloc-formation');
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // GESTION DE LA SOUMISSION ET DES LOGS TEMPORELS
+    // GESTION DE LA SOUMISSION REELLE ET COMPACTE
     // ==========================================
     const entryForm = document.getElementById('entry-form');
     entryForm.addEventListener('submit', async (e) => {
@@ -69,13 +69,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 2. Récupération et formatage automatique de la Date/Heure locale de la machine
         const localMachineDate = new Date();
 
-        // Formatage de la date (ex: JJ/MM/AAAA)
         const day = String(localMachineDate.getDate()).padStart(2, '0');
         const month = String(localMachineDate.getMonth() + 1).padStart(2, '0');
         const year = localMachineDate.getFullYear();
         const formattedLocalDate = `${day}/${month}/${year}`;
 
-        // Formatage de l'heure d'entrée (ex: HH:MM)
         const entryHours = String(localMachineDate.getHours()).padStart(2, '0');
         const entryMinutes = String(localMachineDate.getMinutes()).padStart(2, '0');
         const formattedEntryTime = `${entryHours}:${entryMinutes}`;
@@ -88,22 +86,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const exitMinutes = String(exitMachineDate.getMinutes()).padStart(2, '0');
         const formattedExitTime = `${exitHours}:${exitMinutes}`;
 
-        // 4. Fusion des coordonnées du visiteur avec les logs temporels générés automatiquement
+        // 4. Alignement strict des variables pour le plugin PHP
         const fullyEnrichedPayload = {
             ...formDataObj,
             'date': formattedLocalDate,
             'heure_entree': formattedEntryTime,
-            'heure_output_prevue': formattedExitTime // Correspond à heure_entrée + 2h
+            'heure_output_prevue': formattedExitTime
         };
 
-        console.log("Données complètes prêtes pour envoi à l'API :", fullyEnrichedPayload);
-
         try {
-            // L'appel réel postVisit(fullyEnrichedPayload) sera activé avec ton endpoint custom.
-            // const response = await postVisit(fullyEnrichedPayload);
+            // ACTIVATION DE L'APPEL REEL VERS TON PLUGIN PHP
+            const response = await postVisit(fullyEnrichedPayload);
             
-            // Simulation d'une ID générée pour l'étiquette brute
-            const simulatedVisitorId = Math.floor(Math.random() * 9000) + 1000;
+            // On extrait la véritable ID générée par WordPress
+            const dynamicVisitorId = response.idVisiteur;
             
             let targetName = '';
             let assignedRoom = '-';
@@ -118,11 +114,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 assignedRoom = selectElement.options[selectElement.selectedIndex].dataset.local || 'Inconnu';
             }
 
-            // Génération de l'étiquette de confirmation avec l'heure d'entrée et de sortie calculée
-            renderTicket(fullyEnrichedPayload, targetName, assignedRoom, simulatedVisitorId, formattedEntryTime, formattedExitTime);
+            // Génération de l'étiquette finale avec l'identifiant réel de ta DB
+            renderTicket(fullyEnrichedPayload, targetName, assignedRoom, dynamicVisitorId, formattedEntryTime, formattedExitTime);
 
         } catch (error) {
-            errorDisplay.textContent = "Erreur lors de l'enregistrement. Veuillez réessayer.";
+            errorDisplay.textContent = "Erreur lors de l'enregistrement en base de données. Veuillez réessayer.";
             errorDisplay.style.display = 'block';
         }
     });
