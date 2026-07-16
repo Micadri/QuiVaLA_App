@@ -32,7 +32,6 @@ export const renderTicket = (formData, targetName, assignedRoom, visitorId, entr
     const ticketContainer = document.getElementById('ticket-content');
     if (!ticketContainer) return;
 
-    // Formatage précis de l'étiquette pour impression
     ticketContainer.innerHTML = `
         <h3 style="text-align: center; margin-top: 0; text-transform: uppercase;">Badge Visiteur</h3>
         <p><strong>Visiteur :</strong> ${formData['visiteur-prenom']} ${formData['visiteur-nom']}</p>
@@ -48,7 +47,7 @@ export const renderTicket = (formData, targetName, assignedRoom, visitorId, entr
     showScreen('screen-ticket');
 };
 
-export const renderExitConfirmation = (email, exitTime) => {
+export const renderExitConfirmation = (identifier, exitTime) => {
     document.getElementById('ticket-title').textContent = "Merci de votre visite !";
     document.getElementById('ticket-subtitle').style.display = 'none';
     
@@ -57,7 +56,7 @@ export const renderExitConfirmation = (email, exitTime) => {
 
     ticketContainer.innerHTML = `
         <p>Votre départ a bien été enregistré.</p>
-        <p><strong>Email :</strong> ${email}</p>
+        <p><strong>Identifiant utilisé :</strong> ${identifier}</p>
         <p><strong>Heure de départ notée :</strong> ${exitTime}</p>
         <p>Passez une excellente fin de journée.</p>
     `;

@@ -12,17 +12,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('return-visit-form').reset();
         document.getElementById('exit-form').reset();
         
-        // Reset des blocs d'options
         document.getElementById('bloc-personnel').style.display = 'none';
         document.getElementById('bloc-formation').style.display = 'none';
         document.getElementById('ret-bloc-personnel').style.display = 'none';
         document.getElementById('ret-bloc-formation').style.display = 'none';
 
-        // Reset du toggle de recherche
         document.getElementById('search-mode').value = 'id';
         document.getElementById('search-id-group').style.display = 'block';
         document.getElementById('search-email-group').style.display = 'none';
         document.getElementById('link-toggle-search').textContent = "J'ai oublié mon ID, utiliser mon email";
+        
+        // Reset aussi le mode de sortie
+        document.getElementById('exit-mode').value = 'id';
+        document.getElementById('exit-id-group').style.display = 'block';
+        document.getElementById('exit-email-group').style.display = 'none';
+        const toggleExit = document.getElementById('link-toggle-exit');
+        if(toggleExit) toggleExit.textContent = "J'ai oublié mon ID, utiliser mon email";
     };
 
     // ==========================================
@@ -32,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-start-return').addEventListener('click', () => showScreen('screen-return-search'));
     document.getElementById('btn-start-exit').addEventListener('click', () => showScreen('screen-logout'));
 
-    // Boutons d'annulation -> retour accueil
     ['btn-cancel-entry', 'btn-cancel-return-search', 'btn-cancel-return-confirm', 'btn-cancel-exit', 'btn-finish'].forEach(id => {
         const btn = document.getElementById(id);
         if(btn) btn.addEventListener('click', () => {
@@ -52,21 +56,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     populateSelect('ret-visite-personnel', personnels);
     populateSelect('ret-visite-formation', formations);
 
-    // Écouteurs de condition d'affichage (Nouveau visiteur)
     document.getElementById('visite-type').addEventListener('change', (e) => {
         document.getElementById('bloc-personnel').style.display = e.target.value === 'Visite' ? 'block' : 'none';
         document.getElementById('bloc-formation').style.display = e.target.value === 'Formation' ? 'block' : 'none';
     });
 
-    // Écouteurs de condition d'affichage (Visiteur de retour)
     document.getElementById('ret-visite-type').addEventListener('change', (e) => {
         document.getElementById('ret-bloc-personnel').style.display = e.target.value === 'Visite' ? 'block' : 'none';
         document.getElementById('ret-bloc-formation').style.display = e.target.value === 'Formation' ? 'block' : 'none';
     });
 
-    // ==========================================
-    // MÉTHODE COMMUNE DE PAYLOAD TEMPOREL
-    // ==========================================
     const buildTimePayload = (formDataObj) => {
         const now = new Date();
         const formattedLocalDate = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
@@ -90,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const formDataObj = Object.fromEntries(new FormData(e.target));
         const payload = buildTimePayload(formDataObj);
 
-       try {
+        try {
             const response = await postVisit(payload);
             const dynamicVisitorId = response.pinVisiteur || response.idVisiteur;
             
@@ -109,10 +108,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             renderTicket(payload, targetName, assignedRoom, dynamicVisitorId, payload.heure_entree);
             
-            // DÉCLENCHEMENT DE L'IMPRESSION
-            setTimeout(() => {
-                window.print();
-            }, 500);
+            // Impression automatique du badge
+            setTimeout(() => { window.print(); }, 500);
 
         } catch (error) {
             errorDisplay.textContent = "Erreur d'enregistrement. Veuillez réessayer.";
@@ -121,10 +118,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // FLUX 2 : VISITEUR DE RETOUR (RECHERCHE & CONFIRMATION)
+    // FLUX 2 : VISITEUR DE RETOUR
     // ==========================================
-    
-    // Toggle entre recherche par ID ou Email
     document.getElementById('link-toggle-search').addEventListener('click', (e) => {
         e.preventDefault();
         const modeInput = document.getElementById('search-mode');
@@ -142,7 +137,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Soumission de la recherche
     document.getElementById('return-search-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const errorDisplay = document.getElementById('search-error');
@@ -160,14 +154,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const visitor = await fetchVisitor(query, mode);
             
-            // Injection des données visibles de confirmation
             document.getElementById('ret-prenom').textContent = visitor.prenom;
             document.getElementById('ret-nom').textContent = visitor.nom;
             document.getElementById('ret-email').textContent = visitor.email;
             
-            // Injection des données masquées techniques (Email + PIN d'origine)
             document.getElementById('ret-input-email').value = visitor.email;
-            document.getElementById('ret-input-pin').value = visitor.id; // Gèle l'identifiant pour le POST
+            document.getElementById('ret-input-pin').value = visitor.id; 
 
             showScreen('screen-return-confirm');
         } catch (error) {
@@ -176,7 +168,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Soumission de la nouvelle visite (Retour)
     document.getElementById('return-visit-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const errorDisplay = document.getElementById('ret-form-error');
@@ -188,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         payload['visiteur-prenom'] = document.getElementById('ret-prenom').textContent;
         payload['visiteur-nom'] = document.getElementById('ret-nom').textContent;
 
-       try {
+        try {
             const response = await postVisit(payload);
             const dynamicVisitorId = response.pinVisiteur || response.idVisiteur;
             
@@ -207,10 +198,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             renderTicket(payload, targetName, assignedRoom, dynamicVisitorId, payload.heure_entree);
             
-            // DÉCLENCHEMENT DE L'IMPRESSION
-            setTimeout(() => {
-                window.print();
-            }, 500);
+            // Impression automatique du badge
+            setTimeout(() => { window.print(); }, 500);
 
         } catch (error) {
             errorDisplay.textContent = "Erreur d'enregistrement. Veuillez réessayer.";
@@ -219,26 +208,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // FLUX 3 : SORTIE DU BÂTIMENT
+    // FLUX 3 : SORTIE DU BÂTIMENT (CORRIGÉ)
     // ==========================================
+    const linkToggleExit = document.getElementById('link-toggle-exit');
+    if (linkToggleExit) {
+        linkToggleExit.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modeInput = document.getElementById('exit-mode');
+            if (modeInput.value === 'id') {
+                document.getElementById('exit-id-group').style.display = 'none';
+                document.getElementById('exit-email-group').style.display = 'block';
+                modeInput.value = 'email';
+                e.target.textContent = "Je veux utiliser mon numéro d'ID";
+            } else {
+                document.getElementById('exit-id-group').style.display = 'block';
+                document.getElementById('exit-email-group').style.display = 'none';
+                modeInput.value = 'id';
+                e.target.textContent = "J'ai oublié mon ID, utiliser mon email";
+            }
+        });
+    }
+
     const exitForm = document.getElementById('exit-form');
     exitForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const errorDisplay = document.getElementById('exit-error');
         errorDisplay.style.display = 'none';
 
-        const formDataObj = Object.fromEntries(new FormData(e.target));
+        // On récupère directement les valeurs tapées par l'utilisateur
+        const mode = document.getElementById('exit-mode').value;
+        const query = mode === 'id' ? document.getElementById('exit-id').value : document.getElementById('exit-email').value;
+        
+        if (!query) {
+            errorDisplay.textContent = "Veuillez entrer votre ID ou votre email.";
+            errorDisplay.style.display = 'block';
+            return;
+        }
+
         const now = new Date();
         const formattedExitTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
+        // Construction du nouveau format attendu par le PHP
         const exitPayload = {
-            'visiteur-email': formDataObj['visiteur-email'],
+            'identifier': query, 
+            'mode': mode,
             'heure_sortie_reelle': formattedExitTime
         };
 
         try {
             await postExit(exitPayload);
-            renderExitConfirmation(exitPayload['visiteur-email'], formattedExitTime);
+            renderExitConfirmation(query, formattedExitTime);
         } catch (error) {
             errorDisplay.textContent = error.message;
             errorDisplay.style.display = 'block';

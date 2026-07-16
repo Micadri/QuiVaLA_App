@@ -129,14 +129,25 @@
 
         <div id="screen-logout" style="display: none;">
             <h2>Déclaration de votre départ</h2>
-            <p>Entrez votre adresse email pour enregistrer votre sortie du bâtiment.</p>
+            <p>Veuillez vous identifier pour enregistrer votre sortie.</p>
             
             <form id="exit-form">
-                <div>
-                    <label for="exit-email">Votre Email :</label>
-                    <input type="email" id="exit-email" name="visiteur-email" required>
+                <input type="hidden" id="exit-mode" value="id">
+                
+                <div id="exit-id-group">
+                    <label for="exit-id">Votre Numéro d'Identifiant (ID) :</label>
+                    <input type="text" id="exit-id">
                 </div>
-                <br>
+                
+                <div id="exit-email-group" style="display: none;">
+                    <label for="exit-email">Votre Email :</label>
+                    <input type="email" id="exit-email">
+                </div>
+
+                <p style="margin-top: 10px; margin-bottom: 20px;">
+                    <a href="#" id="link-toggle-exit" style="color: blue; text-decoration: underline;">J'ai oublié mon ID, utiliser mon email</a>
+                </p>
+                
                 <button type="submit">Valider ma sortie</button>
                 <button type="button" id="btn-cancel-exit">Annuler</button>
             </form>
