@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const personnels = await fetchPersonnel();
     const formations = await fetchFormations();
     
-    // On hydrate les deux formulaires (Nouveau ET Retour)
     populateSelect('visite-personnel', personnels);
     populateSelect('visite-formation', formations);
     populateSelect('ret-visite-personnel', personnels);
@@ -93,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const response = await postVisit(payload);
-            const dynamicVisitorId = response.idVisiteur;
+            const dynamicVisitorId = response.pinVisiteur || response.idVisiteur;
             
             let targetName = '';
             let assignedRoom = '-';
@@ -155,11 +154,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const visitor = await fetchVisitor(query, mode);
             
-            // Injection des données dans la page de confirmation
+            // Injection des données visibles de confirmation
             document.getElementById('ret-prenom').textContent = visitor.prenom;
             document.getElementById('ret-nom').textContent = visitor.nom;
             document.getElementById('ret-email').textContent = visitor.email;
-            document.getElementById('ret-input-email').value = visitor.email; // Indispensable pour la création de visite
+            
+            // Injection des données masquées techniques (Email + PIN d'origine)
+            document.getElementById('ret-input-email').value = visitor.email;
+            document.getElementById('ret-input-pin').value = visitor.id; // Gèle l'identifiant pour le POST
 
             showScreen('screen-return-confirm');
         } catch (error) {
@@ -177,14 +179,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const formDataObj = Object.fromEntries(new FormData(e.target));
         const payload = buildTimePayload(formDataObj);
         
-        // On récupère manuellement le prénom et nom pour l'étiquette graphique (car non soumis dans ce form)
         payload['visiteur-prenom'] = document.getElementById('ret-prenom').textContent;
         payload['visiteur-nom'] = document.getElementById('ret-nom').textContent;
 
         try {
-            // L'API PHP gère la reconnaissance d'email via postVisit()
             const response = await postVisit(payload);
-            const dynamicVisitorId = response.idVisiteur;
+            const dynamicVisitorId = response.pinVisiteur || response.idVisiteur;
             
             let targetName = '';
             let assignedRoom = '-';

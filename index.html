@@ -7,7 +7,6 @@
 <body>
 
     <div id="app">
-        <!-- ÉCRAN 1 : ACCUEIL -->
         <div id="screen-home">
             <h1>Bienvenue chez nous</h1>
             <p>Veuillez signaler votre présence ou votre départ.</p>
@@ -16,7 +15,6 @@
             <button id="btn-start-exit">Je signale ma sortie</button>
         </div>
 
-        <!-- ÉCRAN 2 : FORMULAIRE NOUVEAU VISITEUR -->
         <div id="screen-form" style="display: none;">
             <h2>Enregistrement de votre profil</h2>
             
@@ -62,7 +60,6 @@
             <p id="form-error" style="color: red; display: none;"></p>
         </div>
 
-        <!-- ÉCRAN 3 : RECHERCHE VISITEUR EXISTANT -->
         <div id="screen-return-search" style="display: none;">
             <h2>Content de vous revoir !</h2>
             <p>Veuillez vous identifier pour accélérer votre enregistrement.</p>
@@ -90,7 +87,6 @@
             <p id="search-error" style="color: red; display: none;"></p>
         </div>
 
-        <!-- ÉCRAN 4 : CONFIRMATION VISITEUR EXISTANT -->
         <div id="screen-return-confirm" style="display: none;">
             <h2>Confirmez vos coordonnées</h2>
             
@@ -102,6 +98,7 @@
 
             <form id="return-visit-form">
                 <input type="hidden" id="ret-input-email" name="visiteur-email">
+                <input type="hidden" id="ret-input-pin" name="pin-visiteur">
                 
                 <div>
                     <label for="ret-visite-type">Motif de votre visite d'aujourd'hui :</label>
@@ -129,7 +126,6 @@
             <p id="ret-form-error" style="color: red; display: none;"></p>
         </div>
 
-        <!-- ÉCRAN 5 : DÉPART -->
         <div id="screen-logout" style="display: none;">
             <h2>Déclaration de votre départ</h2>
             <p>Entrez votre adresse email pour enregistrer votre sortie du bâtiment.</p>
@@ -146,14 +142,12 @@
             <p id="exit-error" style="color: red; display: none;"></p>
         </div>
 
-        <!-- ÉCRAN 6 : L'ÉTIQUETTE / CONFIRMATION -->
         <div id="screen-ticket" style="display: none;">
             <h2 id="ticket-title">Entrée validée !</h2>
             <p id="ticket-subtitle">Veuillez conserver ces informations :</p>
             
             <div id="ticket-content" style="border: 2px dashed #000; padding: 15px; margin: 20px 0;">
-                <!-- Injecté par JS -->
-            </div>
+                </div>
             
             <button id="btn-finish">Terminer</button>
         </div>
