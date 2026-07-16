@@ -1,5 +1,5 @@
-import { fetchPersonnel, fetchFormations, postVisit } from './api.js';
-import { showScreen, populateSelect, renderTicket } from './ui.js';
+import { fetchPersonnel, fetchFormations, postVisit, postExit } from './api.js';
+import { showScreen, populateSelect, renderTicket, renderExitConfirmation } from './ui.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     
@@ -12,18 +12,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const prenomInput = document.getElementById('prenom');
     const nomInput = document.getElementById('nom');
 
-    // Clic sur "Pas encore enregistré ?"
     linkNewVisitor.addEventListener('click', (e) => {
         e.preventDefault();
         newVisitorFields.style.display = 'block';
-        toggleNewVisitor.style.display = 'none'; // On masque le lien
-        prenomInput.required = true; // Devient obligatoire
-        nomInput.required = true;    // Devient obligatoire
+        toggleNewVisitor.style.display = 'none';
+        prenomInput.required = true;
+        nomInput.required = true;
     });
 
-    // Fonction pour tout remettre à zéro après une visite
     const resetFormUI = () => {
         document.getElementById('entry-form').reset();
+        document.getElementById('exit-form').reset();
         newVisitorFields.style.display = 'none';
         toggleNewVisitor.style.display = 'block';
         prenomInput.required = false;
@@ -33,13 +32,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // ==========================================
-    // NAVIGATION DU PARCOURS UTILISATEUR
+    // NAVIGATION DU PARCOURS UTILISATEUR (SPA)
     // ==========================================
     document.getElementById('btn-start-entry').addEventListener('click', () => {
         showScreen('screen-form');
     });
 
-    document.getElementById('btn-cancel').addEventListener('click', () => {
+    document.getElementById('btn-start-exit').addEventListener('click', () => {
+        showScreen('screen-logout');
+    });
+
+    document.getElementById('btn-cancel-entry').addEventListener('click', () => {
+        resetFormUI();
+        showScreen('screen-home');
+    });
+
+    document.getElementById('btn-cancel-exit').addEventListener('click', () => {
         resetFormUI();
         showScreen('screen-home');
     });
@@ -58,24 +66,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     populateSelect('visite-formation', formations);
 
     const selectType = document.getElementById('visite-type');
-    const blocPersonnel = document.getElementById('bloc-personnel');
-    const blocFormation = document.getElementById('bloc-formation');
-
     selectType.addEventListener('change', (e) => {
-        if (e.target.value === 'Visite') {
-            blocPersonnel.style.display = 'block';
-            blocFormation.style.display = 'none';
-        } else if (e.target.value === 'Formation') {
-            blocPersonnel.style.display = 'none';
-            blocFormation.style.display = 'block';
-        } else {
-            blocPersonnel.style.display = 'none';
-            blocFormation.style.display = 'none';
-        }
+        document.getElementById('bloc-personnel').style.display = e.target.value === 'Visite' ? 'block' : 'none';
+        document.getElementById('bloc-formation').style.display = e.target.value === 'Formation' ? 'block' : 'none';
     });
 
     // ==========================================
-    // GESTION DE LA SOUMISSION
+    // TRAITEMENT DU FORMULAIRE D'ENTRÉE
     // ==========================================
     const entryForm = document.getElementById('entry-form');
     entryForm.addEventListener('submit', async (e) => {
@@ -84,29 +81,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         errorDisplay.style.display = 'none';
 
         const formDataObj = Object.fromEntries(new FormData(e.target));
-        const localMachineDate = new Date();
+        const now = new Date();
 
-        const day = String(localMachineDate.getDate()).padStart(2, '0');
-        const month = String(localMachineDate.getMonth() + 1).padStart(2, '0');
-        const year = localMachineDate.getFullYear();
-        const formattedLocalDate = `${day}/${month}/${year}`;
+        const formattedLocalDate = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+        const formattedEntryTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-        const entryHours = String(localMachineDate.getHours()).padStart(2, '0');
-        const entryMinutes = String(localMachineDate.getMinutes()).padStart(2, '0');
-        const formattedEntryTime = `${entryHours}:${entryMinutes}`;
-
-        const exitMachineDate = new Date(localMachineDate.getTime());
-        exitMachineDate.setHours(localMachineDate.getHours() + 2);
-
-        const exitHours = String(exitMachineDate.getHours()).padStart(2, '0');
-        const exitMinutes = String(exitMachineDate.getMinutes()).padStart(2, '0');
-        const formattedExitTime = `${exitHours}:${exitMinutes}`;
-
+        // L'heure de sortie n'est plus calculée ni envoyée à l'entrée
         const fullyEnrichedPayload = {
             ...formDataObj,
             'date': formattedLocalDate,
-            'heure_entree': formattedEntryTime,
-            'heure_output_prevue': formattedExitTime
+            'heure_entree': formattedEntryTime
         };
 
         try {
@@ -126,10 +110,36 @@ document.addEventListener('DOMContentLoaded', async () => {
                 assignedRoom = selectElement.options[selectElement.selectedIndex].dataset.local || 'Inconnu';
             }
 
-            renderTicket(fullyEnrichedPayload, targetName, assignedRoom, dynamicVisitorId, formattedEntryTime, formattedExitTime);
-
+            renderTicket(fullyEnrichedPayload, targetName, assignedRoom, dynamicVisitorId, formattedEntryTime);
         } catch (error) {
-            errorDisplay.textContent = "Erreur lors de l'enregistrement en base de données. Veuillez réessayer.";
+            errorDisplay.textContent = "Erreur d'enregistrement. Veuillez réessayer.";
+            errorDisplay.style.display = 'block';
+        }
+    });
+
+    // ==========================================
+    // TRAITEMENT DU FORMULAIRE DE SORTIE
+    // ==========================================
+    const exitForm = document.getElementById('exit-form');
+    exitForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errorDisplay = document.getElementById('exit-error');
+        errorDisplay.style.display = 'none';
+
+        const formDataObj = Object.fromEntries(new FormData(e.target));
+        const now = new Date();
+        const formattedExitTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        const exitPayload = {
+            'visiteur-email': formDataObj['visiteur-email'],
+            'heure_sortie_reelle': formattedExitTime
+        };
+
+        try {
+            await postExit(exitPayload);
+            renderExitConfirmation(exitPayload['visiteur-email'], formattedExitTime);
+        } catch (error) {
+            errorDisplay.textContent = error.message;
             errorDisplay.style.display = 'block';
         }
     });

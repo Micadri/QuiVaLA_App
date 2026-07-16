@@ -3,7 +3,7 @@
  * @param {string} screenId - L'ID de l'élément HTML block à afficher.
  */
 export const showScreen = (screenId) => {
-    const appScreens = ['screen-home', 'screen-form', 'screen-ticket'];
+    const appScreens = ['screen-home', 'screen-form', 'screen-logout', 'screen-ticket'];
     appScreens.forEach(id => {
         document.getElementById(id).style.display = 'none';
     });
@@ -24,7 +24,6 @@ export const populateSelect = (selectId, data) => {
         optionElement.value = item.id; 
         optionElement.textContent = item.title.rendered; 
         
-        // Cartographie sécurisée des locaux ACF selon le type de contenu
         if (item.acf && item.acf.local) {
             optionElement.dataset.local = item.acf.local;
         } else if (item.acf && item.acf['formation-local']) {
@@ -37,14 +36,11 @@ export const populateSelect = (selectId, data) => {
 
 /**
  * Construit structurellement le ticket d'étiquette visiteur et l'injecte dans la vue finale.
- * @param {Object} formData - Données d'identité extraites du formulaire.
- * @param {string} targetName - Nom de la personne ou intitulé de la formation.
- * @param {string} assignedRoom - Salle ou local cible.
- * @param {number|string} visitorId - Identifiant unique généré en base de données.
- * @param {string} entryTime - Heure locale d'entrée capturée.
- * @param {string} exitTime - Heure de sortie estimée automatiquement à +2h.
  */
-export const renderTicket = (formData, targetName, assignedRoom, visitorId, entryTime, exitTime) => {
+export const renderTicket = (formData, targetName, assignedRoom, visitorId, entryTime) => {
+    document.getElementById('ticket-title').textContent = "Entrée validée !";
+    document.getElementById('ticket-subtitle').style.display = 'block';
+    
     const ticketContainer = document.getElementById('ticket-content');
     if (!ticketContainer) return;
 
@@ -52,13 +48,29 @@ export const renderTicket = (formData, targetName, assignedRoom, visitorId, entr
         <p><strong>Visiteur :</strong> ${formData['visiteur-prenom']} ${formData['visiteur-nom']}</p>
         <p><strong>Date :</strong> ${formData.date}</p>
         <p><strong>Heure d'Arrivée :</strong> ${entryTime}</p>
-        <p><strong>Heure de Sortie Prévue (+2h) :</strong> ${exitTime}</p>
         <hr style="border-top: 1px dashed #000;">
         <p><strong>Rendez-vous :</strong> ${targetName}</p>
         <p><strong>Localisation :</strong> ${assignedRoom}</p>
         <p style="font-size: 18px; margin-top: 10px;"><strong>VOTRE IDENTIFIANT COMPLET : ${visitorId}</strong></p>
     `;
+    showScreen('screen-ticket');
+};
+
+/**
+ * Affiche l'écran de confirmation de sortie définitive.
+ */
+export const renderExitConfirmation = (email, exitTime) => {
+    document.getElementById('ticket-title').textContent = "Merci de votre visite !";
+    document.getElementById('ticket-subtitle').style.display = 'none';
     
-    // Transition visuelle vers l'écran du ticket
+    const ticketContainer = document.getElementById('ticket-content');
+    if (!ticketContainer) return;
+
+    ticketContainer.innerHTML = `
+        <p>Votre départ a bien été enregistré.</p>
+        <p><strong>Email :</strong> ${email}</p>
+        <p><strong>Heure de départ notée :</strong> ${exitTime}</p>
+        <p>Passez une excellente fin de journée.</p>
+    `;
     showScreen('screen-ticket');
 };

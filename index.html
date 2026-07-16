@@ -7,31 +7,26 @@
 <body>
 
     <div id="app">
-        <!-- ÉCRAN 1 : ACCUEIL -->
         <div id="screen-home">
             <h1>Bienvenue chez nous</h1>
-            <p>Veuillez signaler votre présence.</p>
+            <p>Veuillez signaler votre présence ou votre départ.</p>
             <button id="btn-start-entry">Je signale mon entrée</button>
+            <button id="btn-start-exit">Je signale ma sortie</button>
         </div>
 
-        <!-- ÉCRAN 2 : FORMULAIRE D'ENTRÉE -->
         <div id="screen-form" style="display: none;">
             <h2>Enregistrement de votre visite</h2>
             
             <form id="entry-form">
-                
-                <!-- 1. Email : Toujours visible -->
                 <div>
                     <label for="email">Email :</label>
                     <input type="email" id="email" name="visiteur-email" required>
                 </div>
                 
-                <!-- 2. Lien d'inscription pour les nouveaux -->
                 <p id="toggle-new-visitor" style="margin-top: 10px; margin-bottom: 20px;">
                     <a href="#" id="link-new-visitor" style="color: blue; text-decoration: underline;">Pas encore enregistré ?</a>
                 </p>
 
-                <!-- 3. Prénom et Nom : Cachés par défaut -->
                 <div id="new-visitor-fields" style="display: none; margin-bottom: 20px;">
                     <div>
                         <label for="prenom">Prénom :</label>
@@ -45,7 +40,6 @@
                 
                 <hr>
 
-                <!-- 4. Motif de la visite (Toujours visible) -->
                 <div>
                     <label for="visite-type">Motif de la visite :</label>
                     <select id="visite-type" name="visite-type" required>
@@ -67,19 +61,33 @@
 
                 <br>
                 <button type="submit">Valider mon entrée</button>
-                <button type="button" id="btn-cancel">Annuler</button>
+                <button type="button" id="btn-cancel-entry">Annuler</button>
             </form>
             <p id="form-error" style="color: red; display: none;"></p>
         </div>
 
-        <!-- ÉCRAN 3 : L'ÉTIQUETTE -->
+        <div id="screen-logout" style="display: none;">
+            <h2>Déclaration de votre départ</h2>
+            <p>Entrez votre adresse email pour enregistrer votre sortie du bâtiment.</p>
+            
+            <form id="exit-form">
+                <div>
+                    <label for="exit-email">Votre Email :</label>
+                    <input type="email" id="exit-email" name="visiteur-email" required>
+                </div>
+                <br>
+                <button type="submit">Valider ma sortie</button>
+                <button type="button" id="btn-cancel-exit">Annuler</button>
+            </form>
+            <p id="exit-error" style="color: red; display: none;"></p>
+        </div>
+
         <div id="screen-ticket" style="display: none;">
-            <h2>Entrée validée !</h2>
-            <p>Veuillez conserver ces informations :</p>
+            <h2 id="ticket-title">Entrée validée !</h2>
+            <p id="ticket-subtitle">Veuillez conserver ces informations :</p>
             
             <div id="ticket-content" style="border: 2px dashed #000; padding: 15px; margin: 20px 0;">
-                <!-- Injecté par JS -->
-            </div>
+                </div>
             
             <button id="btn-finish">Terminer</button>
         </div>
