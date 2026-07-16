@@ -22,10 +22,13 @@ export const populateSelect = (selectId, data) => {
     data.forEach(item => {
         const optionElement = document.createElement('option');
         optionElement.value = item.id; 
+        
+        // On affiche le titre natif de WordPress dans le menu déroulant
         optionElement.textContent = item.title.rendered; 
         
-        if (item.acf && item.acf.local) {
-            optionElement.dataset.local = item.acf.local;
+        // CORRECTION ICI : Ciblage strict des vraies clés ACF retournées par l'API
+        if (item.acf && item.acf['personnel-local']) {
+            optionElement.dataset.local = item.acf['personnel-local'];
         } else if (item.acf && item.acf['formation-local']) {
             optionElement.dataset.local = item.acf['formation-local'];
         }
