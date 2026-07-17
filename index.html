@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Accueil Visiteur - Qui Va Là ?</title>
+    
+    <!-- Librairie Génération QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- NOUVEAU : Librairie Scanner QR -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,6 +19,7 @@
 
     <div id="app">
         <!-- ÉCRAN 1 : ACCUEIL -->
+        <!-- ... (Reste identique) ... -->
         <div id="screen-home">
             <h1>Qui Va Là ?</h1>
             <p>Bienvenue. Veuillez signaler votre présence ou votre départ.</p>
@@ -20,10 +28,10 @@
             <button id="btn-start-exit">Je signale ma sortie</button>
         </div>
 
-        <!-- ÉCRAN 2 : FORMULAIRE NOUVEAU VISITEUR -->
+        <!-- ÉCRAN 2 : NOUVEAU VISITEUR -->
+        <!-- ... (Reste identique) ... -->
         <div id="screen-form" style="display: none;">
             <h2>Création de votre profil</h2>
-            
             <form id="entry-form">
                 <div>
                     <label for="prenom">Prénom :</label>
@@ -37,9 +45,7 @@
                     <label for="email">Adresse Email :</label>
                     <input type="email" id="email" name="visiteur-email" required>
                 </div>
-                
                 <hr>
-
                 <div>
                     <label for="visite-type">Motif de votre visite :</label>
                     <select id="visite-type" name="visite-type" required>
@@ -48,28 +54,29 @@
                         <option value="Formation">Je viens suivre une formation</option>
                     </select>
                 </div>
-
                 <div id="bloc-personnel" style="display: none;">
                     <label for="visite-personnel">Personne rencontrée :</label>
                     <select id="visite-personnel" name="visite-personnel"></select>
                 </div>
-
                 <div id="bloc-formation" style="display: none;">
                     <label for="visite-formation">Formation suivie :</label>
                     <select id="visite-formation" name="visite-formation"></select>
                 </div>
-
                 <button type="submit">Valider mon entrée</button>
                 <button type="button" id="btn-cancel-entry">Retour à l'accueil</button>
             </form>
             <p id="form-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
-        <!-- ÉCRAN 3 : RECHERCHE VISITEUR EXISTANT -->
+        <!-- ÉCRAN 3 : RECHERCHE VISITEUR EXISTANT (Mis à jour) -->
         <div id="screen-return-search" style="display: none;">
             <h2>Content de vous revoir !</h2>
-            <p>Identifiez-vous pour accélérer votre enregistrement.</p>
             
+            <!-- Bouton pour déclencher la caméra -->
+            <button type="button" id="btn-scan-return" class="primary" style="margin-bottom: 15px; font-size: 20px;">📷 Scanner mon Badge</button>
+            
+            <div style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: bold;">- OU SAISIE MANUELLE -</div>
+
             <form id="return-search-form">
                 <input type="hidden" id="search-mode" value="id">
                 
@@ -94,19 +101,17 @@
         </div>
 
         <!-- ÉCRAN 4 : CONFIRMATION VISITEUR EXISTANT -->
+        <!-- ... (Reste identique) ... -->
         <div id="screen-return-confirm" style="display: none;">
             <h2>Confirmez votre identité</h2>
-            
             <div class="recap-box">
                 <p><strong>Prénom :</strong> <span id="ret-prenom"></span></p>
                 <p><strong>Nom :</strong> <span id="ret-nom"></span></p>
                 <p><strong>Email :</strong> <span id="ret-email"></span></p>
             </div>
-
             <form id="return-visit-form">
                 <input type="hidden" id="ret-input-email" name="visiteur-email">
                 <input type="hidden" id="ret-input-pin" name="pin-visiteur">
-                
                 <div>
                     <label for="ret-visite-type">Motif de votre visite d'aujourd'hui :</label>
                     <select id="ret-visite-type" name="visite-type" required>
@@ -115,27 +120,26 @@
                         <option value="Formation">Je viens suivre une formation</option>
                     </select>
                 </div>
-
                 <div id="ret-bloc-personnel" style="display: none;">
                     <label for="ret-visite-personnel">Personne rencontrée :</label>
                     <select id="ret-visite-personnel" name="visite-personnel"></select>
                 </div>
-
                 <div id="ret-bloc-formation" style="display: none;">
                     <label for="ret-visite-formation">Formation suivie :</label>
                     <select id="ret-visite-formation" name="visite-formation"></select>
                 </div>
-
                 <button type="submit">Valider mon entrée</button>
                 <button type="button" id="btn-cancel-return-confirm">Annuler</button>
             </form>
             <p id="ret-form-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
-        <!-- ÉCRAN 5 : DÉPART -->
+        <!-- ÉCRAN 5 : DÉPART (Mis à jour) -->
         <div id="screen-logout" style="display: none;">
             <h2>Au revoir !</h2>
-            <p>Veuillez vous identifier pour enregistrer votre sortie.</p>
+            
+            <button type="button" id="btn-scan-exit" class="primary" style="margin-bottom: 15px; font-size: 20px;">📷 Scanner mon Badge</button>
+            <div style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-weight: bold;">- OU SAISIE MANUELLE -</div>
             
             <form id="exit-form">
                 <input type="hidden" id="exit-mode" value="id">
@@ -160,16 +164,23 @@
             <p id="exit-error" style="color: var(--danger-color); display: none; margin-top:15px;"></p>
         </div>
 
-        <!-- ÉCRAN 6 : L'ÉTIQUETTE / CONFIRMATION -->
+        <!-- ÉCRAN 6 : L'ÉTIQUETTE -->
+        <!-- ... (Reste identique) ... -->
         <div id="screen-ticket" style="display: none;">
             <h2 id="ticket-title">Entrée validée !</h2>
             <p id="ticket-subtitle">L'impression de votre badge est en cours...</p>
-            
-            <div id="ticket-content">
-                <!-- Injecté par JS (ui.js) et capturé par @media print -->
-            </div>
-            
+            <div id="ticket-content"></div>
             <button id="btn-finish">Terminer et retourner à l'accueil</button>
+        </div>
+    </div>
+
+    <!-- NOUVEAU : FENÊTRE MODALE DU SCANNER CAMÉRA -->
+    <div id="scanner-modal" style="display: none;">
+        <div class="scanner-card">
+            <h3 style="color: var(--accent-color); margin-bottom: 15px;">Présentez votre QR Code</h3>
+            <!-- C'est ici que la caméra va s'afficher -->
+            <div id="reader"></div>
+            <button type="button" id="btn-close-scanner" style="margin-top: 20px;">Annuler</button>
         </div>
     </div>
 
