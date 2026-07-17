@@ -39,29 +39,12 @@ export const renderTicket = (formData, targetName, assignedRoom, visitorId, entr
         <p><strong>Heure d'Arrivée :</strong> ${entryTime}</p>
         <p><strong>Rendez-vous :</strong> ${targetName}</p>
         <p><strong>Localisation :</strong> ${assignedRoom}</p>
-        
-        <!-- NOUVEAU : Le conteneur centré pour le dessin du QR Code -->
-        <div id="qrcode-container" style="display: flex; justify-content: center; margin-top: 15px;"></div>
-
-        <div style="text-align: center; border: 2px solid black; padding: 5px; margin-top: 10px;">
-            <strong>IDENTIFIANT MANUEL : ${visitorId}</strong>
+        <div style="text-align: center; border: 2px solid black; padding: 5px; margin-top: 15px;">
+            <strong>VOTRE IDENTIFIANT COMPLET : ${visitorId}</strong>
         </div>
     `;
     
     showScreen('screen-ticket');
-
-    // NOUVEAU : Génération instantanée du QR Code avec le PIN du visiteur
-    const qrContainer = document.getElementById('qrcode-container');
-    qrContainer.innerHTML = ''; // Sécurité : on vide le conteneur avant de dessiner
-    
-    new QRCode(qrContainer, {
-        text: String(visitorId), // Le QR code contient strictement le code PIN
-        width: 100,              // Taille adaptée pour l'impression de l'étiquette
-        height: 100,
-        colorDark : "#000000",   // Noir pour le contraste de l'imprimante thermique
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H // Haut niveau de correction d'erreur
-    });
 };
 
 export const renderExitConfirmation = (identifier, exitTime) => {
